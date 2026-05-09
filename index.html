@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>♠️ ♥️ Poker Calculator ♣️ ♦️</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23071a0f'/><text y='75' x='50' text-anchor='middle' font-size='70'>♠️</text></svg>">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23164024'/><text y='75' x='50' text-anchor='middle' font-size='70'>♠️</text></svg>">
     <style>
         :root {
             --glass-bg: rgba(255, 255, 255, 0.08);
@@ -20,8 +20,6 @@
 
         body {
             font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            background: radial-gradient(circle at center, #1a4d2e 0%, #071a0f 100%);
-            background-attachment: fixed;
             color: var(--text-white);
             margin: 0;
             padding: 10px;
@@ -29,6 +27,18 @@
             display: flex;
             justify-content: center;
             align-items: flex-start;
+        }
+
+        /* Trucco anti-glitch per lo scorrimento mobile */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: radial-gradient(circle at center, #1a4d2e 0%, #071a0f 100%);
+            z-index: -1;
         }
 
         .container {
@@ -88,7 +98,6 @@
             grid-template-columns: 2fr 1.2fr 1.2fr 40px;
             gap: 10px;
             margin-bottom: 15px;
-            padding: 0 10px;
             color: var(--accent-gold);
             font-size: 11px;
             text-transform: uppercase;
@@ -316,7 +325,7 @@
                 error_mismatch: "⚠️ Errore Cassa: Inseriti {s}€, ritirati {g}€",
                 no_debts: "Pareggio perfetto! Nessun debito.", transfer: " paga a ",
                 btn_credits: "Crediti",
-                credit_msg: "Fully vibecoded by Daniele Santoru using Gemini 3.1 Pro, mentre era ubriaco e giocava a poker."
+                credit_msg: "Completamente vibecodato da Daniele Santoru usando Gemini 3.1 Pro, mentre era ubriaco e giocava a poker."
             },
             en: {
                 col_name: "Name", col_spent: "Buy-in", col_gained: "Payout",
