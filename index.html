@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conti Poker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1e1e1e;
+            color: #ffffff;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .container {
+            background-color: #2d2d2d;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 600px;
+        }
+        h1 { text-align: center; color: #4CAF50; }
+        .row-header, .player-row {
+            display: grid;
+            grid-template-columns: 2fr 1.5fr 1.5fr 40px;
+            gap: 10px;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+        .row-header { font-weight: bold; font-size: 14px; text-align: center; }
+        input {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            border: 1px solid #555;
+            border-radius: 5px;
+            background-color: #444;
+            color: white;
+        }
+        button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+        .btn-add { background-color: #2196F3; color: white; width: 100%; margin-top: 10px; }
+        .btn-add:hover { background-color: #1976D2; }
+        .btn-calc { background-color: #4CAF50; color: white; width: 100%; margin-top: 15px; font-size: 16px; }
+        .btn-calc:hover { background-color: #388E3C; }
+        .btn-remove { background-color: #f44336; color: white; padding: 8px; }
+        .btn-remove:hover { background-color: #d32f2f; }
+        
+        #results {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #333;
+            border-radius: 5px;
+            display: none;
+        }
+        .error { color: #ff5252; font-weight: bold; }
+        .transfer { margin: 5px 0; font-size: 16px; border-bottom: 1px solid #555; padding-bottom: 5px; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>♠️ Conti Poker ♥️</h1>
+        
+        <div class="row-header">
+            <div>Nome Giocatore</div>
+            <div>Spesa (€)</div>
+            <div>Incasso (€)</div>
+            <div></div>
+        </div>
+
+        <div id="players-container">
+            </div>
+
+        <button id="add-btn" class="btn-add">+ Aggiungi Giocatore</button>
+        <button id="calc-btn" class="btn-calc">Calcola Pagamenti</button>
+        <button id="reset-btn" style="background: #777; color: white; width: 100%; margin-top: 10px;">Azzera Tutto</button>
+
+        <div id="results"></div>
+    </div>
+
+    <script>
+        const container = document.getElementById('players-container');
+        const resultsDiv = document.getElementById('results');
+        
+        // Inizializza i dati dal LocalStorage o crea una riga vuota
+        let players = JSON.parse(localStorage.getItem('pokerData')) || [{ id: Date.now(), name: '', spent: '', gained: '' }];
+
+        function saveToLocalStorage() {
+            localStorage.setItem('pokerData', JSON.stringify(players));
+        }
+
+        function renderRows() {
+            container.innerHTML = '';
+            players.forEach((player, index) => {
+                const row = document.createElement('div');
+                row.className = 'player-row';
+                row.innerHTML = `
+                    <input type="text" placeholder="Nome" value="${player.name}" oninput="updateData(${index}, 'name', this.value)">
+                    <input type="number" step="0.5" placeholder="0" value="${player.spent}" oninput="updateData(${index}, 'spent', this.value)">
+                    <input type="number" step="0.5" placeholder="0" value="${player.gained}" oninput="updateData(${index}, 'gained', this.value)">
+                    <button class="btn-remove" onclick="removeRow(${index})" title="Rimuovi">X</button>
+                `;
+                container.appendChild(row);
+            });
+        }
+
+        function updateData(index, field, value) {
+            players[index][field] = value;
+            saveToLocalStorage();
+        }
+
+        document.getElementById('add-btn').addEventListener('click', () => {
+            players.push({ id: Date.now(), name: '', spent: '', gained: '' });
+            saveToLocalStorage();
+            renderRows();
+        });
+
+        window.removeRow = function(index) {
+            players.splice(index, 1);
+            saveToLocalStorage();
+            renderRows();
+        }
+
+        document.getElementById('reset-btn').addEventListener('click', () => {
+            if(confirm("Sei sicuro di voler cancellare tutti i dati della partita?")) {
+                players = [{ id: Date.now(), name: '', spent: '', gained: '' }];
+                saveToLocalStorage();
+                renderRows();
+                resultsDiv.style.display = 'none';
+            }
+        });
+
+        document.getElementById('calc-btn').addEventListener('click', () => {
+            resultsDiv.style.display = 'block';
+            resultsDiv.innerHTML = '<h3>Risultati:</h3>';
+            
+            let totalSpent = 0;
+            let totalGained = 0;
+            let debtors = [];
+            let creditors = [];
+
+            // Analizza i dati
+            players.forEach(p => {
+                let spent = parseFloat(p.spent) || 0;
+                let gained = parseFloat(p.gained) || 0;
+                let name = p.name || 'Sconosciuto';
+                
+                totalSpent += spent;
+                totalGained += gained;
+                
+                let net = gained - spent; // Se positivo ha vinto (creditore), se negativo ha perso (debitore)
+                
+                if (net < -0.01) debtors.push({ name: name, amount: Math.abs(net) });
+                else if (net > 0.01) creditors.push({ name: name, amount: net });
+            });
+
+            // Controllo congruenza (I soldi sul tavolo devono tornare)
+            if (Math.abs(totalSpent - totalGained) > 0.01) {
+                resultsDiv.innerHTML += `<p class="error">⚠️ Attenzione: La somma delle spese (${totalSpent}€) non coincide con la somma degli incassi finali (${totalGained}€). Ricontrolla i numeri!</p>`;
+                return;
+            }
+
+            // Se tutto torna e non ci sono movimenti
+            if (debtors.length === 0 && creditors.length === 0) {
+                resultsDiv.innerHTML += `<p>Nessun debito da saldare. Tutti in pari!</p>`;
+                return;
+            }
+
+            // Ordina dal più grande al più piccolo per minimizzare i trasferimenti
+            debtors.sort((a, b) => b.amount - a.amount);
+            creditors.sort((a, b) => b.amount - a.amount);
+
+            let i = 0; // indice debitori
+            let j = 0; // indice creditori
+
+            // Algoritmo di smistamento debiti
+            while (i < debtors.length && j < creditors.length) {
+                let debt = debtors[i];
+                let cred = creditors[j];
+                let amountToTransfer = Math.min(debt.amount, cred.amount);
+
+                resultsDiv.innerHTML += `<div class="transfer">💸 <b>${debt.name}</b> deve pagare <b>${amountToTransfer.toFixed(2)}€</b> a <b>${cred.name}</b></div>`;
+
+                debt.amount -= amountToTransfer;
+                cred.amount -= amountToTransfer;
+
+                if (debt.amount < 0.01) i++;
+                if (cred.amount < 0.01) j++;
+            }
+        });
+
+        // Caricamento iniziale
+        renderRows();
+    </script>
+</body>
+</html>
