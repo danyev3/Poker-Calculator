@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>♠️♥️ Poker Calculator ♣️♦️</title>
+    <title>♠️ ♥️ Poker Calculator ♣️ ♦️</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23071a0f' stroke='%2334d399' stroke-width='4'/><text y='75' x='17' font-size='70'>♠️</text></svg>">
     <style>
         :root {
@@ -67,8 +67,9 @@
 
         .controls-top {
             display: flex;
-            gap: 12px;
+            gap: 8px;
             align-items: center;
+            flex-wrap: wrap;
         }
 
         select {
@@ -148,18 +149,24 @@
             transform: translateY(-2px);
         }
 
-        .btn-reset {
+        .btn-top {
             background: rgba(255, 255, 255, 0.05);
             color: var(--text-dim);
-            padding: 8px 15px;
+            padding: 8px 12px;
             font-size: 11px;
             border: 1px solid var(--glass-border);
+            text-transform: uppercase;
         }
 
         .btn-reset:hover {
             background: var(--danger);
             color: white;
             border-color: transparent;
+        }
+
+        .btn-credits:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
         }
 
         .btn-remove {
@@ -205,17 +212,70 @@
             text-align: center;
             font-size: 13px;
         }
+
+        /* Modal Credits */
+        #modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            padding: 30px;
+            border-radius: 24px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            animation: modalPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes modalPop {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .modal-content p {
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            color: var(--text-white);
+        }
+
+        .btn-close-modal {
+            background: var(--accent-gold);
+            color: #000;
+            padding: 10px 25px;
+            width: auto;
+            margin: 0 auto;
+        }
         
         @media (max-width: 500px) {
             .container { padding: 15px; }
             input { padding: 10px 5px; font-size: 14px; }
             .row-header { font-size: 9px; gap: 5px; }
             .player-row { gap: 5px; }
-            h1 { font-size: 18px; }
+            h1 { font-size: 18px; width: 100%; margin-bottom: 10px; }
+            .controls-top { width: 100%; justify-content: space-between; }
         }
     </style>
 </head>
 <body>
+
+    <div id="modal-overlay" onclick="closeCredits()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <p id="credit-text"></p>
+            <button class="btn btn-close-modal" onclick="closeCredits()">OK</button>
+        </div>
+    </div>
 
     <div class="container">
         <div class="header">
@@ -228,7 +288,8 @@
                     <option value="fr">🇫🇷 FR</option>
                     <option value="de">🇩🇪 DE</option>
                 </select>
-                <button id="reset-btn" class="btn btn-reset" onclick="resetAll()">Reset</button>
+                <button class="btn btn-top btn-credits" onclick="openCredits()" data-t="btn_credits">Credits</button>
+                <button id="reset-btn" class="btn btn-top btn-reset" onclick="resetAll()">Reset</button>
             </div>
         </div>
 
@@ -252,38 +313,57 @@
                 col_name: "Nome", col_spent: "Buy-in", col_gained: "Payout",
                 btn_add: "Aggiungi Giocatore", confirm_reset: "Azzera tutti i dati?", 
                 error_mismatch: "⚠️ Errore Cassa: Inseriti {s}€, ritirati {g}€",
-                no_debts: "Pareggio perfetto! Nessun debito.", transfer: " paga a "
+                no_debts: "Pareggio perfetto! Nessun debito.", transfer: " paga a ",
+                btn_credits: "Crediti",
+                credit_msg: "Completamente vibecodato da Daniele Santoru usando Gemini 3.1 Pro, mentre era ubriaco e giocava a poker."
             },
             en: {
                 col_name: "Name", col_spent: "Buy-in", col_gained: "Payout",
                 btn_add: "Add Player", confirm_reset: "Clear all data?", 
                 error_mismatch: "⚠️ Balance Error: In {s}€, Out {g}€",
-                no_debts: "Perfect balance! No payments.", transfer: " pays "
+                no_debts: "Perfect balance! No payments.", transfer: " pays ",
+                btn_credits: "Credits",
+                credit_msg: "Fully vibecoded by Daniele Santoru using Gemini 3.1 Pro, while he was drunk and playing poker."
             },
             es: {
                 col_name: "Nombre", col_spent: "Entrada", col_gained: "Salida",
                 btn_add: "Añadir Jugador", confirm_reset: "¿Borrar datos?", 
                 error_mismatch: "⚠️ Error: Entrada {s}€ ≠ Salida {g}€",
-                no_debts: "¡Equilibrio perfecto!", transfer: " paga a "
+                no_debts: "¡Equilibrio perfetto!", transfer: " paga a ",
+                btn_credits: "Créditos",
+                credit_msg: "Totalmente vibecoded por Daniele Santoru usando Gemini 3.1 Pro, mientras estaba borracho y jugaba al póquer."
             },
             fr: {
                 col_name: "Nom", col_spent: "Cave", col_gained: "Retrait",
                 btn_add: "Ajouter Joueur", confirm_reset: "Effacer les données ?", 
                 error_mismatch: "⚠️ Erreur : Cave {s}€ ≠ Retrait {g}€",
-                no_debts: "Équilibre parfait !", transfer: " paie à "
+                no_debts: "Équilibre parfait !", transfer: " paie à ",
+                btn_credits: "Crédits",
+                credit_msg: "Entièrement vibecodé par Daniele Santoru avec Gemini 3.1 Pro, alors qu'il était ivre et jouait au poker."
             },
             de: {
                 col_name: "Name", col_spent: "Buy-in", col_gained: "Payout",
                 btn_add: "Spieler hinzufügen", confirm_reset: "Daten löschen?", 
                 error_mismatch: "⚠️ Fehler: Buy-in {s}€ ≠ Payout {g}€",
-                no_debts: "Keine Zahlungen nötig.", transfer: " zahlt an "
+                no_debts: "Keine Zahlungen nötig.", transfer: " zahlt an ",
+                btn_credits: "Credits",
+                credit_msg: "Vollständig vibecodiert von Daniele Santoru mit Gemini 3.1 Pro, während er betrunken war und Poker spielte."
             }
         };
 
-        const nameColors = ["#FF6B6B", "#4ECDC4", "#FFE66D", "#F06292", "#A29BFE", "#55E6C1", "#FAB1A0", "#FD79A8", "#74B9FF", "#00CEC9"];
+        const nameColors = [
+            "#FF6B6B", "#4ECDC4", "#FFE66D", "#F06292", "#A29BFE", 
+            "#55E6C1", "#FAB1A0", "#FD79A8", "#74B9FF", "#00CEC9",
+            "#FF9FF3", "#F368E0", "#FF4757", "#FFA502", "#10AC84",
+            "#1DD1A1", "#0ABDE3", "#9C88FF", "#D980FA", "#EE5A24",
+            "#00A8FF", "#8C7AE6", "#E84393", "#4CD137", "#FBC531",
+            "#487EB0", "#E1B12C", "#44BD32", "#C23616", "#8E44AD"
+        ];
 
         let currentLang = localStorage.getItem('pokerLang') || (navigator.language.startsWith('it') ? 'it' : 'en');
         let players = [];
+        let sessionColors = {};
+        let colorCounter = 0;
 
         try {
             players = JSON.parse(localStorage.getItem('pokerData')) || [];
@@ -295,11 +375,11 @@
         function getColorForName(name) {
             let safeName = (name || "").toString().trim().toLowerCase();
             if (!safeName) return "#ffffff";
-            let hash = 0;
-            for (let i = 0; i < safeName.length; i++) {
-                hash = safeName.charCodeAt(i) + ((hash << 5) - hash);
+            if (!sessionColors[safeName]) {
+                sessionColors[safeName] = nameColors[colorCounter % nameColors.length];
+                colorCounter++;
             }
-            return nameColors[Math.abs(hash) % nameColors.length];
+            return sessionColors[safeName];
         }
 
         function save() { localStorage.setItem('pokerData', JSON.stringify(players)); }
@@ -311,7 +391,16 @@
                 el.innerText = translations[lang][el.getAttribute('data-t')];
             });
             document.getElementById('langSelect').value = lang;
+            document.getElementById('credit-text').innerText = translations[lang].credit_msg;
             calculate();
+        }
+
+        function openCredits() {
+            document.getElementById('modal-overlay').style.display = 'flex';
+        }
+
+        function closeCredits() {
+            document.getElementById('modal-overlay').style.display = 'none';
         }
 
         function render() {
@@ -351,6 +440,8 @@
         function resetAll() {
             if(confirm(translations[currentLang].confirm_reset)) {
                 players = [{ id: Date.now(), name: '', spent: '', gained: '' }];
+                sessionColors = {};
+                colorCounter = 0;
                 save(); render(); calculate();
             }
         }
