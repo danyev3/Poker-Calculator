@@ -3,205 +3,341 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Conti Poker</title>
+    <title>Poker Ledger Pro</title>
     <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --accent-green: #10b981;
+            --accent-gold: #fbbf24;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --danger: #ef4444;
+            --input-bg: #334155;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            background-color: #1e1e1e;
-            color: #ffffff;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: radial-gradient(circle at top, #1e293b 0%, #0f172a 100%);
+            color: var(--text-primary);
             margin: 0;
             padding: 20px;
+            min-height: 100vh;
             display: flex;
-            flex-direction: column;
-            align-items: center;
+            justify-content: center;
         }
+
         .container {
-            background-color: #2d2d2d;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
             width: 100%;
-            max-width: 600px;
+            max-width: 700px;
+            background-color: var(--card-bg);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
-        h1 { text-align: center; color: #4CAF50; }
-        .row-header, .player-row {
-            display: grid;
-            grid-template-columns: 2fr 1.5fr 1.5fr 40px;
+
+        /* Header & Localization */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 24px;
+            background: linear-gradient(to right, var(--accent-green), var(--accent-gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+        }
+
+        .controls-top {
+            display: flex;
             gap: 10px;
-            margin-bottom: 10px;
             align-items: center;
         }
-        .row-header { font-weight: bold; font-size: 14px; text-align: center; }
-        input {
-            width: 100%;
-            padding: 8px;
-            box-sizing: border-box;
-            border: 1px solid #555;
-            border-radius: 5px;
-            background-color: #444;
+
+        select {
+            background: var(--input-bg);
             color: white;
-        }
-        button {
-            padding: 10px 15px;
             border: none;
-            border-radius: 5px;
+            padding: 5px 10px;
+            border-radius: 8px;
             cursor: pointer;
-            font-weight: bold;
-            transition: background 0.3s;
+            outline: none;
         }
-        .btn-add { background-color: #2196F3; color: white; width: 100%; margin-top: 10px; }
-        .btn-add:hover { background-color: #1976D2; }
-        .btn-calc { background-color: #4CAF50; color: white; width: 100%; margin-top: 15px; font-size: 16px; }
-        .btn-calc:hover { background-color: #388E3C; }
-        .btn-remove { background-color: #f44336; color: white; padding: 8px; }
-        .btn-remove:hover { background-color: #d32f2f; }
-        
+
+        /* Table */
+        .row-header {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 40px;
+            gap: 12px;
+            margin-bottom: 15px;
+            padding: 0 10px;
+            color: var(--text-secondary);
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .player-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 40px;
+            gap: 12px;
+            margin-bottom: 12px;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        input {
+            background: var(--input-bg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 12px;
+            border-radius: 12px;
+            color: white;
+            font-size: 15px;
+            transition: all 0.2s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--accent-green);
+            background: #475569;
+        }
+
+        /* Buttons */
+        .btn {
+            border: none;
+            border-radius: 12px;
+            padding: 12px 20px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.1s, opacity 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn:active { transform: scale(0.98); }
+
+        .btn-add {
+            width: 100%;
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--accent-green);
+            border: 1px dashed var(--accent-green);
+            margin: 15px 0;
+        }
+
+        .btn-calc {
+            width: 100%;
+            background: linear-gradient(135deg, var(--accent-green), #059669);
+            color: white;
+            font-size: 17px;
+            box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-reset {
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 12px;
+            padding: 5px 10px;
+            border: 1px solid #334155;
+        }
+
+        .btn-reset:hover { color: var(--danger); border-color: var(--danger); }
+
+        .btn-remove {
+            background: transparent;
+            color: #64748b;
+            font-size: 18px;
+        }
+
+        .btn-remove:hover { color: var(--danger); }
+
+        /* Results */
         #results {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: #333;
-            border-radius: 5px;
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(15, 23, 42, 0.5);
+            border-radius: 15px;
+            border-left: 4px solid var(--accent-gold);
             display: none;
         }
-        .error { color: #ff5252; font-weight: bold; }
-        .transfer { margin: 5px 0; font-size: 16px; border-bottom: 1px solid #555; padding-bottom: 5px; }
+
+        .transfer {
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .error { color: var(--danger); font-size: 14px; margin-top: 10px; }
+
+        @media (max-width: 500px) {
+            .row-header { display: none; }
+            .player-row { grid-template-columns: 1fr 1fr; gap: 8px; }
+            input[type="text"] { grid-column: span 2; }
+            .btn-remove { grid-row: 2; grid-column: 2; justify-self: end; }
+        }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h1>♠️ Conti Poker ♥️</h1>
-        
-        <div class="row-header">
-            <div>Nome Giocatore</div>
-            <div>Spesa (€)</div>
-            <div>Incasso (€)</div>
-            <div></div>
+        <div class="header">
+            <h1 id="title">Poker Ledger Pro</h1>
+            <div class="controls-top">
+                <select id="langSelect" onchange="changeLanguage(this.value)">
+                    <option value="it">🇮🇹 IT</option>
+                    <option value="en">🇺🇸 EN</option>
+                    <option value="es">🇪🇸 ES</option>
+                    <option value="fr">🇫🇷 FR</option>
+                    <option value="de">🇩🇪 DE</option>
+                </select>
+                <button id="reset-btn" class="btn btn-reset" onclick="resetAll()">RESET</button>
+            </div>
         </div>
 
-        <div id="players-container">
-            </div>
+        <div class="row-header">
+            <span data-t="col_name">Nome</span>
+            <span data-t="col_spent">Spesa</span>
+            <span data-t="col_gained">Incasso</span>
+            <span></span>
+        </div>
 
-        <button id="add-btn" class="btn-add">+ Aggiungi Giocatore</button>
-        <button id="calc-btn" class="btn-calc">Calcola Pagamenti</button>
-        <button id="reset-btn" style="background: #777; color: white; width: 100%; margin-top: 10px;">Azzera Tutto</button>
+        <div id="players-container"></div>
+
+        <button id="add-btn" class="btn btn-add" onclick="addRow()">+ <span data-t="btn_add">Aggiungi</span></button>
+        <button id="calc-btn" class="btn btn-calc" onclick="calculate()"><span data-t="btn_calc">Calcola Risultati</span></button>
 
         <div id="results"></div>
     </div>
 
     <script>
-        const container = document.getElementById('players-container');
-        const resultsDiv = document.getElementById('results');
-        
-        // Inizializza i dati dal LocalStorage o crea una riga vuota
+        const translations = {
+            it: {
+                col_name: "Giocatore", col_spent: "Buy-in", col_gained: "Cash-out",
+                btn_add: "Aggiungi Giocatore", btn_calc: "Calcola Pagamenti",
+                confirm_reset: "Cancellare tutti i dati?", error_mismatch: "Errore: Totale Speso ({s}€) ≠ Totale Incassato ({g}€)",
+                no_debts: "Pareggio perfetto! Nessuno deve nulla.", transfer: " deve dare a "
+            },
+            en: {
+                col_name: "Player", col_spent: "Buy-in", col_gained: "Cash-out",
+                btn_add: "Add Player", btn_calc: "Calculate Payouts",
+                confirm_reset: "Clear all data?", error_mismatch: "Error: Total Buy-in ({s}€) ≠ Total Cash-out ({g}€)",
+                no_debts: "Perfect balance! No payments needed.", transfer: " must pay "
+            },
+            es: {
+                col_name: "Jugador", col_spent: "Entrada", col_gained: "Salida",
+                btn_add: "Añadir Jugador", btn_calc: "Calcular Pagos",
+                confirm_reset: "¿Borrar todos los datos?", error_mismatch: "Error: Total Entrada ({s}€) ≠ Total Salida ({g}€)",
+                no_debts: "¡Equilibrio perfecto! No hay pagos.", transfer: " debe pagar a "
+            },
+            fr: {
+                col_name: "Joueur", col_spent: "Mise", col_gained: "Gain",
+                btn_add: "Ajouter Joueur", btn_calc: "Calculer les Paiements",
+                confirm_reset: "Effacer toutes les données ?", error_mismatch: "Erreur : Total Mise ({s}€) ≠ Total Gain ({g}€)",
+                no_debts: "Équilibre parfait ! Aucun paiement.", transfer: " doit payer à "
+            },
+            de: {
+                col_name: "Spieler", col_spent: "Buy-in", col_gained: "Cash-out",
+                btn_add: "Spieler hinzufügen", btn_calc: "Auszahlungen berechnen",
+                confirm_reset: "Alle Daten löschen?", error_mismatch: "Fehler: Gesamt Buy-in ({s}€) ≠ Gesamt Cash-out ({g}€)",
+                no_debts: "Perfekte Balance! Keine Zahlungen nötig.", transfer: " muss zahlen an "
+            }
+        };
+
+        let currentLang = localStorage.getItem('pokerLang') || (navigator.language.startsWith('it') ? 'it' : 'en');
         let players = JSON.parse(localStorage.getItem('pokerData')) || [{ id: Date.now(), name: '', spent: '', gained: '' }];
 
-        function saveToLocalStorage() {
-            localStorage.setItem('pokerData', JSON.stringify(players));
+        function save() { localStorage.setItem('pokerData', JSON.stringify(players)); }
+
+        function changeLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem('pokerLang', lang);
+            document.querySelectorAll('[data-t]').forEach(el => {
+                el.innerText = translations[lang][el.getAttribute('data-t')];
+            });
+            document.getElementById('langSelect').value = lang;
         }
 
-        function renderRows() {
+        function render() {
+            const container = document.getElementById('players-container');
             container.innerHTML = '';
-            players.forEach((player, index) => {
-                const row = document.createElement('div');
-                row.className = 'player-row';
-                row.innerHTML = `
-                    <input type="text" placeholder="Nome" value="${player.name}" oninput="updateData(${index}, 'name', this.value)">
-                    <input type="number" step="0.5" placeholder="0" value="${player.spent}" oninput="updateData(${index}, 'spent', this.value)">
-                    <input type="number" step="0.5" placeholder="0" value="${player.gained}" oninput="updateData(${index}, 'gained', this.value)">
-                    <button class="btn-remove" onclick="removeRow(${index})" title="Rimuovi">X</button>
+            players.forEach((p, i) => {
+                const div = document.createElement('div');
+                div.className = 'player-row';
+                div.innerHTML = `
+                    <input type="text" placeholder="..." value="${p.name}" oninput="update(${i}, 'name', this.value)">
+                    <input type="number" step="0.5" placeholder="0" value="${p.spent}" oninput="update(${i}, 'spent', this.value)">
+                    <input type="number" step="0.5" placeholder="0" value="${p.gained}" oninput="update(${i}, 'gained', this.value)">
+                    <button class="btn btn-remove" onclick="remove(${i})">×</button>
                 `;
-                container.appendChild(row);
+                container.appendChild(div);
             });
+            changeLanguage(currentLang);
         }
 
-        function updateData(index, field, value) {
-            players[index][field] = value;
-            saveToLocalStorage();
-        }
-
-        document.getElementById('add-btn').addEventListener('click', () => {
-            players.push({ id: Date.now(), name: '', spent: '', gained: '' });
-            saveToLocalStorage();
-            renderRows();
-        });
-
-        window.removeRow = function(index) {
-            players.splice(index, 1);
-            saveToLocalStorage();
-            renderRows();
-        }
-
-        document.getElementById('reset-btn').addEventListener('click', () => {
-            if(confirm("Sei sicuro di voler cancellare tutti i dati della partita?")) {
+        function update(i, field, val) { players[i][field] = val; save(); }
+        function addRow() { players.push({ id: Date.now(), name: '', spent: '', gained: '' }); save(); render(); }
+        function remove(i) { players.splice(i, 1); save(); render(); }
+        
+        function resetAll() {
+            if(confirm(translations[currentLang].confirm_reset)) {
                 players = [{ id: Date.now(), name: '', spent: '', gained: '' }];
-                saveToLocalStorage();
-                renderRows();
-                resultsDiv.style.display = 'none';
+                save(); render();
+                document.getElementById('results').style.display = 'none';
             }
-        });
+        }
 
-        document.getElementById('calc-btn').addEventListener('click', () => {
-            resultsDiv.style.display = 'block';
-            resultsDiv.innerHTML = '<h3>Risultati:</h3>';
+        function calculate() {
+            const resDiv = document.getElementById('results');
+            resDiv.innerHTML = '';
+            resDiv.style.display = 'block';
             
-            let totalSpent = 0;
-            let totalGained = 0;
-            let debtors = [];
-            let creditors = [];
+            let totalS = 0, totalG = 0, debtors = [], creditors = [];
 
-            // Analizza i dati
             players.forEach(p => {
-                let spent = parseFloat(p.spent) || 0;
-                let gained = parseFloat(p.gained) || 0;
-                let name = p.name || 'Sconosciuto';
-                
-                totalSpent += spent;
-                totalGained += gained;
-                
-                let net = gained - spent; // Se positivo ha vinto (creditore), se negativo ha perso (debitore)
-                
-                if (net < -0.01) debtors.push({ name: name, amount: Math.abs(net) });
-                else if (net > 0.01) creditors.push({ name: name, amount: net });
+                let s = parseFloat(p.spent) || 0, g = parseFloat(p.gained) || 0;
+                totalS += s; totalG += g;
+                let net = g - s;
+                if (net < -0.01) debtors.push({ n: p.name || '?', a: Math.abs(net) });
+                else if (net > 0.01) creditors.push({ n: p.name || '?', a: net });
             });
 
-            // Controllo congruenza (I soldi sul tavolo devono tornare)
-            if (Math.abs(totalSpent - totalGained) > 0.01) {
-                resultsDiv.innerHTML += `<p class="error">⚠️ Attenzione: La somma delle spese (${totalSpent}€) non coincide con la somma degli incassi finali (${totalGained}€). Ricontrolla i numeri!</p>`;
+            if (Math.abs(totalS - totalG) > 0.1) {
+                resDiv.innerHTML = `<div class="error">${translations[currentLang].error_mismatch.replace('{s}', totalS.toFixed(2)).replace('{g}', totalG.toFixed(2))}</div>`;
                 return;
             }
 
-            // Se tutto torna e non ci sono movimenti
-            if (debtors.length === 0 && creditors.length === 0) {
-                resultsDiv.innerHTML += `<p>Nessun debito da saldare. Tutti in pari!</p>`;
+            if (debtors.length === 0) {
+                resDiv.innerHTML = `<div>${translations[currentLang].no_debts}</div>`;
                 return;
             }
 
-            // Ordina dal più grande al più piccolo per minimizzare i trasferimenti
-            debtors.sort((a, b) => b.amount - a.amount);
-            creditors.sort((a, b) => b.amount - a.amount);
+            debtors.sort((a, b) => b.a - a.a);
+            creditors.sort((a, b) => b.a - a.a);
 
-            let i = 0; // indice debitori
-            let j = 0; // indice creditori
-
-            // Algoritmo di smistamento debiti
+            let i = 0, j = 0;
             while (i < debtors.length && j < creditors.length) {
-                let debt = debtors[i];
-                let cred = creditors[j];
-                let amountToTransfer = Math.min(debt.amount, cred.amount);
-
-                resultsDiv.innerHTML += `<div class="transfer">💸 <b>${debt.name}</b> deve pagare <b>${amountToTransfer.toFixed(2)}€</b> a <b>${cred.name}</b></div>`;
-
-                debt.amount -= amountToTransfer;
-                cred.amount -= amountToTransfer;
-
-                if (debt.amount < 0.01) i++;
-                if (cred.amount < 0.01) j++;
+                let d = debtors[i], c = creditors[j], amt = Math.min(d.a, c.a);
+                resDiv.innerHTML += `<div class="transfer"><span><b>${d.n}</b> ${translations[currentLang].transfer} <b>${c.n}</b></span> <b>${amt.toFixed(2)}€</b></div>`;
+                d.a -= amt; c.a -= amt;
+                if (d.a < 0.01) i++;
+                if (c.a < 0.01) j++;
             }
-        });
+        }
 
-        // Caricamento iniziale
-        renderRows();
+        render();
     </script>
 </body>
 </html>
