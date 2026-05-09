@@ -6,36 +6,41 @@
     <title>Poker Ledger Pro</title>
     <style>
         :root {
-            --bg-color: #0f172a;
-            --card-bg: #1e293b;
+            --card-bg: rgba(15, 23, 42, 0.95);
             --accent-green: #10b981;
             --accent-gold: #fbbf24;
             --text-primary: #f8fafc;
             --text-secondary: #94a3b8;
             --danger: #ef4444;
-            --input-bg: #334155;
+            --input-bg: #1e293b;
+        }
+
+        * {
+            box-sizing: border-box;
         }
 
         body {
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background: radial-gradient(circle at top, #1e293b 0%, #0f172a 100%);
+            /* Sfondo stile tavolo da poker in panno verde */
+            background: radial-gradient(circle at center, #2e6b45 0%, #0b2115 100%);
             color: var(--text-primary);
             margin: 0;
-            padding: 20px;
+            padding: 10px;
             min-height: 100vh;
             display: flex;
             justify-content: center;
+            align-items: flex-start;
         }
 
         .container {
             width: 100%;
             max-width: 700px;
             background-color: var(--card-bg);
-            padding: 30px;
-            border-radius: 20px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            position: relative;
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 16px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: 2vh;
         }
 
         /* Header & Localization */
@@ -43,12 +48,12 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
         }
 
         h1 {
             margin: 0;
-            font-size: 24px;
+            font-size: 22px;
             background: linear-gradient(to right, var(--accent-green), var(--accent-gold));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -64,93 +69,85 @@
         select {
             background: var(--input-bg);
             color: white;
-            border: none;
-            padding: 5px 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 6px 8px;
             border-radius: 8px;
             cursor: pointer;
             outline: none;
+            font-size: 14px;
         }
 
         /* Table */
         .row-header {
             display: grid;
-            grid-template-columns: 2fr 1fr 1fr 40px;
-            gap: 12px;
-            margin-bottom: 15px;
-            padding: 0 10px;
+            /* 3 colonne fisse sulla stessa riga + bottone X */
+            grid-template-columns: 2fr 1.2fr 1.2fr 30px;
+            gap: 8px;
+            margin-bottom: 10px;
+            padding: 0 5px;
             color: var(--text-secondary);
-            font-size: 13px;
+            font-size: 12px;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
         }
 
         .player-row {
             display: grid;
-            grid-template-columns: 2fr 1fr 1fr 40px;
-            gap: 12px;
-            margin-bottom: 12px;
-            animation: fadeIn 0.3s ease-out;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            grid-template-columns: 2fr 1.2fr 1.2fr 30px;
+            gap: 8px;
+            margin-bottom: 10px;
+            align-items: center;
         }
 
         input {
+            width: 100%;
+            min-width: 0; /* Fondamentale per far rimpicciolire l'input su mobile */
             background: var(--input-bg);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 12px;
-            border-radius: 12px;
+            padding: 10px 8px;
+            border-radius: 8px;
             color: white;
-            font-size: 15px;
+            font-size: 14px;
             transition: all 0.2s;
         }
 
         input:focus {
             outline: none;
-            border-color: var(--accent-green);
-            background: #475569;
+            border-color: var(--accent-gold);
+            background: #2f3e52;
         }
 
         /* Buttons */
         .btn {
             border: none;
-            border-radius: 12px;
-            padding: 12px 20px;
+            border-radius: 8px;
             font-weight: 600;
             cursor: pointer;
             transition: transform 0.1s, opacity 0.2s;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
         }
 
-        .btn:active { transform: scale(0.98); }
+        .btn:active { transform: scale(0.95); }
 
         .btn-add {
             width: 100%;
-            background: rgba(16, 185, 129, 0.1);
+            padding: 12px;
+            background: rgba(16, 185, 129, 0.15);
             color: var(--accent-green);
             border: 1px dashed var(--accent-green);
-            margin: 15px 0;
-        }
-
-        .btn-calc {
-            width: 100%;
-            background: linear-gradient(135deg, var(--accent-green), #059669);
-            color: white;
-            font-size: 17px;
-            box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.3);
+            margin: 15px 0 25px 0;
+            font-size: 15px;
         }
 
         .btn-reset {
             background: transparent;
             color: var(--text-secondary);
-            font-size: 12px;
-            padding: 5px 10px;
+            font-size: 11px;
+            padding: 6px 10px;
             border: 1px solid #334155;
+            text-transform: uppercase;
         }
 
         .btn-reset:hover { color: var(--danger); border-color: var(--danger); }
@@ -158,35 +155,39 @@
         .btn-remove {
             background: transparent;
             color: #64748b;
-            font-size: 18px;
+            font-size: 20px;
+            padding: 0;
         }
 
         .btn-remove:hover { color: var(--danger); }
 
         /* Results */
         #results {
-            margin-top: 30px;
-            padding: 20px;
-            background: rgba(15, 23, 42, 0.5);
-            border-radius: 15px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
             border-left: 4px solid var(--accent-gold);
             display: none;
+            font-size: 15px;
         }
 
         .transfer {
-            padding: 12px 0;
+            padding: 10px 0;
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
             display: flex;
             justify-content: space-between;
+            align-items: center;
         }
 
-        .error { color: var(--danger); font-size: 14px; margin-top: 10px; }
-
-        @media (max-width: 500px) {
-            .row-header { display: none; }
-            .player-row { grid-template-columns: 1fr 1fr; gap: 8px; }
-            input[type="text"] { grid-column: span 2; }
-            .btn-remove { grid-row: 2; grid-column: 2; justify-self: end; }
+        .transfer:last-child { border-bottom: none; padding-bottom: 0; }
+        .error { color: var(--danger); font-size: 14px; font-weight: bold; }
+        
+        /* Piccoli aggiustamenti per schermi molto stretti */
+        @media (max-width: 400px) {
+            .container { padding: 15px 10px; }
+            input { padding: 8px 4px; font-size: 13px; }
+            .row-header { font-size: 10px; gap: 4px; }
+            .player-row { gap: 4px; }
         }
     </style>
 </head>
@@ -194,7 +195,7 @@
 
     <div class="container">
         <div class="header">
-            <h1 id="title">Poker Ledger Pro</h1>
+            <h1 id="title">Poker Ledger</h1>
             <div class="controls-top">
                 <select id="langSelect" onchange="changeLanguage(this.value)">
                     <option value="it">🇮🇹 IT</option>
@@ -203,141 +204,10 @@
                     <option value="fr">🇫🇷 FR</option>
                     <option value="de">🇩🇪 DE</option>
                 </select>
-                <button id="reset-btn" class="btn btn-reset" onclick="resetAll()">RESET</button>
+                <button id="reset-btn" class="btn btn-reset" onclick="resetAll()">Reset</button>
             </div>
         </div>
 
         <div class="row-header">
             <span data-t="col_name">Nome</span>
-            <span data-t="col_spent">Spesa</span>
-            <span data-t="col_gained">Incasso</span>
-            <span></span>
-        </div>
-
-        <div id="players-container"></div>
-
-        <button id="add-btn" class="btn btn-add" onclick="addRow()">+ <span data-t="btn_add">Aggiungi</span></button>
-        <button id="calc-btn" class="btn btn-calc" onclick="calculate()"><span data-t="btn_calc">Calcola Risultati</span></button>
-
-        <div id="results"></div>
-    </div>
-
-    <script>
-        const translations = {
-            it: {
-                col_name: "Giocatore", col_spent: "Buy-in", col_gained: "Cash-out",
-                btn_add: "Aggiungi Giocatore", btn_calc: "Calcola Pagamenti",
-                confirm_reset: "Cancellare tutti i dati?", error_mismatch: "Errore: Totale Speso ({s}€) ≠ Totale Incassato ({g}€)",
-                no_debts: "Pareggio perfetto! Nessuno deve nulla.", transfer: " deve dare a "
-            },
-            en: {
-                col_name: "Player", col_spent: "Buy-in", col_gained: "Cash-out",
-                btn_add: "Add Player", btn_calc: "Calculate Payouts",
-                confirm_reset: "Clear all data?", error_mismatch: "Error: Total Buy-in ({s}€) ≠ Total Cash-out ({g}€)",
-                no_debts: "Perfect balance! No payments needed.", transfer: " must pay "
-            },
-            es: {
-                col_name: "Jugador", col_spent: "Entrada", col_gained: "Salida",
-                btn_add: "Añadir Jugador", btn_calc: "Calcular Pagos",
-                confirm_reset: "¿Borrar todos los datos?", error_mismatch: "Error: Total Entrada ({s}€) ≠ Total Salida ({g}€)",
-                no_debts: "¡Equilibrio perfecto! No hay pagos.", transfer: " debe pagar a "
-            },
-            fr: {
-                col_name: "Joueur", col_spent: "Mise", col_gained: "Gain",
-                btn_add: "Ajouter Joueur", btn_calc: "Calculer les Paiements",
-                confirm_reset: "Effacer toutes les données ?", error_mismatch: "Erreur : Total Mise ({s}€) ≠ Total Gain ({g}€)",
-                no_debts: "Équilibre parfait ! Aucun paiement.", transfer: " doit payer à "
-            },
-            de: {
-                col_name: "Spieler", col_spent: "Buy-in", col_gained: "Cash-out",
-                btn_add: "Spieler hinzufügen", btn_calc: "Auszahlungen berechnen",
-                confirm_reset: "Alle Daten löschen?", error_mismatch: "Fehler: Gesamt Buy-in ({s}€) ≠ Gesamt Cash-out ({g}€)",
-                no_debts: "Perfekte Balance! Keine Zahlungen nötig.", transfer: " muss zahlen an "
-            }
-        };
-
-        let currentLang = localStorage.getItem('pokerLang') || (navigator.language.startsWith('it') ? 'it' : 'en');
-        let players = JSON.parse(localStorage.getItem('pokerData')) || [{ id: Date.now(), name: '', spent: '', gained: '' }];
-
-        function save() { localStorage.setItem('pokerData', JSON.stringify(players)); }
-
-        function changeLanguage(lang) {
-            currentLang = lang;
-            localStorage.setItem('pokerLang', lang);
-            document.querySelectorAll('[data-t]').forEach(el => {
-                el.innerText = translations[lang][el.getAttribute('data-t')];
-            });
-            document.getElementById('langSelect').value = lang;
-        }
-
-        function render() {
-            const container = document.getElementById('players-container');
-            container.innerHTML = '';
-            players.forEach((p, i) => {
-                const div = document.createElement('div');
-                div.className = 'player-row';
-                div.innerHTML = `
-                    <input type="text" placeholder="..." value="${p.name}" oninput="update(${i}, 'name', this.value)">
-                    <input type="number" step="0.5" placeholder="0" value="${p.spent}" oninput="update(${i}, 'spent', this.value)">
-                    <input type="number" step="0.5" placeholder="0" value="${p.gained}" oninput="update(${i}, 'gained', this.value)">
-                    <button class="btn btn-remove" onclick="remove(${i})">×</button>
-                `;
-                container.appendChild(div);
-            });
-            changeLanguage(currentLang);
-        }
-
-        function update(i, field, val) { players[i][field] = val; save(); }
-        function addRow() { players.push({ id: Date.now(), name: '', spent: '', gained: '' }); save(); render(); }
-        function remove(i) { players.splice(i, 1); save(); render(); }
-        
-        function resetAll() {
-            if(confirm(translations[currentLang].confirm_reset)) {
-                players = [{ id: Date.now(), name: '', spent: '', gained: '' }];
-                save(); render();
-                document.getElementById('results').style.display = 'none';
-            }
-        }
-
-        function calculate() {
-            const resDiv = document.getElementById('results');
-            resDiv.innerHTML = '';
-            resDiv.style.display = 'block';
-            
-            let totalS = 0, totalG = 0, debtors = [], creditors = [];
-
-            players.forEach(p => {
-                let s = parseFloat(p.spent) || 0, g = parseFloat(p.gained) || 0;
-                totalS += s; totalG += g;
-                let net = g - s;
-                if (net < -0.01) debtors.push({ n: p.name || '?', a: Math.abs(net) });
-                else if (net > 0.01) creditors.push({ n: p.name || '?', a: net });
-            });
-
-            if (Math.abs(totalS - totalG) > 0.1) {
-                resDiv.innerHTML = `<div class="error">${translations[currentLang].error_mismatch.replace('{s}', totalS.toFixed(2)).replace('{g}', totalG.toFixed(2))}</div>`;
-                return;
-            }
-
-            if (debtors.length === 0) {
-                resDiv.innerHTML = `<div>${translations[currentLang].no_debts}</div>`;
-                return;
-            }
-
-            debtors.sort((a, b) => b.a - a.a);
-            creditors.sort((a, b) => b.a - a.a);
-
-            let i = 0, j = 0;
-            while (i < debtors.length && j < creditors.length) {
-                let d = debtors[i], c = creditors[j], amt = Math.min(d.a, c.a);
-                resDiv.innerHTML += `<div class="transfer"><span><b>${d.n}</b> ${translations[currentLang].transfer} <b>${c.n}</b></span> <b>${amt.toFixed(2)}€</b></div>`;
-                d.a -= amt; c.a -= amt;
-                if (d.a < 0.01) i++;
-                if (c.a < 0.01) j++;
-            }
-        }
-
-        render();
-    </script>
-</body>
-</html>
+            <span data-t="col_spent">Buy-in
